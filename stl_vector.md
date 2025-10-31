@@ -12,8 +12,37 @@ int arr[num];
 ### 访问
 
 ``` CPP
+//声明初始化
+std::vector<int>(column);
+
+```
+这一部分是一个 临时对象（匿名 vector），
+表示：
+
+“创建一个长度为 column 的 std::vector<int>，
+其中每个元素都被值初始化为 0。”
+
+这源于 std::vector 的构造函数：
+``` CPP
+explicit vector(size_type count);
+
+```
+所以
+``` cpp
+std::vector<int> v(4);
+//等价于
+v = [0, 0, 0, 0];
+```
+
+
+
+
+访问：
+
+``` CPP
 arr.at(2) = 99; // 若越界会抛出异常
 arr[i] = 10;
+
 ```
 
 
@@ -52,6 +81,55 @@ for (int x : nums)
 
 ### 二维vector
 
+#### 说明
+🧠 1️⃣ 先看 std::vector<int>(column) 是什么？
+``` cpp
+std::vector<int>(column)
+```
+
+这一部分是一个 临时对象（匿名 vector），
+表示：
+
+“创建一个长度为 column 的 std::vector<int>，
+其中每个元素都被值初始化为 0。”
+
+这源于 std::vector 的构造函数：
+``` cpp
+explicit vector(size_type count);
+```
+
+文档说明：
+
+Constructs the container with count default-inserted elements.
+Each element is value-initialized (for int → 0).
+
+🔹 所以：
+``` cpp
+std::vector<int> v(4);
+```
+
+等价于：
+``` cpp
+v = [0, 0, 0, 0];
+```
+🧠 2️⃣ 再看 space.push_back(...)
+
+假设：
+``` cpp
+std::vector<std::vector<int>> space;
+```
+
+那么：
+``` cpp
+space.push_back(std::vector<int>(column));
+```
+
+意思是：
+
+“在 space 的末尾，压入一个新的元素，
+这个元素是一个长度为 column、内容全为 0 的 vector<int>。”
+
+#### 示例
 ``` cpp
 int row = 3, col = 4;
 std::vector<std::vector<int>> mat(row, std::vector<int>(col, 0));
@@ -74,6 +152,22 @@ int row, column;
 ```
 - 自动释放，无需 delete。
 - 支持不同长度的行（即“非矩形二维数组”）。
+
+
+``` CPP
+std::vector<std::vector<int>> space;
+for (int i = 0; i < row; ++i)
+    space.push_back(std::vector<int>(column));
+//等价于
+std::vector<std::vector<int>> space(
+    row,                    // count → 创建 row 个元素
+    std::vector<int>(column) // value → 每个元素都是长度为 column 的 vector<int>
+);
+
+```
+“创建一个名为 space 的二维数组，共有 row 行，
+每一行是一个长度为 column 的 std::vector<int>。”
+
 
 
 
