@@ -59,6 +59,69 @@ BFS在求无权边的最短路径时往往是最优解。
 代码实现思想与前者一致，不过遍历方式发生一丝结构性变化。
 
 
+## 实际应用代码参考
+
+``` CPP
+#include <iostream>
+#include <vector>
+#include <queue>
+
+int main() {
+    int H, W;
+    std::cin >> H >> W;
+    std::vector<std::string> grid(H);
+    std::vector<std::vector<bool>> visited(H,std::vector<bool>(W,false));
+    for (int i = 0; i < H; i++) std::cin >> grid[i];
+
+    // 四方向（右，下，左，上）
+    int dx[4] = {1, 0, -1, 0};
+    int dy[4] = {0, 1, 0, -1};
+    
+    //先找到起始位置*
+    int nx,ny;
+    for(int i=0;i<H;i++){
+        for(int j=0;j<W;j++){
+            if(grid[i][j] == '*'){ nx = j;ny = i;}
+        }
+    }
+
+    
+    //std::cout<<"--test--\n"<<nx<<" "<<ny<<std::endl;
+    //BFS
+    std::queue<std::pair<int,int>> queue;
+    visited[ny][nx] = true;
+    queue.push({nx,ny});
+    while(!queue.empty()){
+        nx = queue.front().first;
+        ny = queue.front().second;
+        queue.pop();
+
+        //弹出队头，并寻找其邻接节点
+        for(int i=0;i<4;i++){
+            //先计算新坐标，再验证该坐标是否越界，再访问
+            int tx = nx + dx[i];
+            int ty = ny + dy[i];
+            if (ty < 0 || ty >= H || tx < 0 || tx >= W) continue;
+            if(grid[ty][tx] == '.' && visited[ty][tx] == false){
+                visited[ty][tx] = true;
+                grid[ty][tx] = '*';
+                queue.push({tx,ty});
+
+            }
+        }
+    }
+
+
+
+    //输出结果
+    for (int i = 0; i < H; i++) {
+        std::cout << grid[i] << '\n';
+    }
+
+    return 0;
+}
+
+```
 
 
 
