@@ -1,0 +1,160 @@
+## std::string
+
+```cpp
+std::string s1 = "Hello";           // 字面量初始化
+std::string s2("World");            // 构造函数初始化
+std::string s3(5, '*');             // *****  重复字符
+std::string s4 = s1 + " " + s2;     // 拼接
+```
+
+### 长度访问修改
+
+| 操作                                   | 说明                          | 示例                   |
+| ---------------------------------------- | ------------------------------- | ------------------------ |
+| `.size()`或`.length()`         | 返回长度                      | `s.size()`         |
+| `.empty()`                         | 是否为空                      | `if (s.empty())`   |
+| `s[i]`                             | 访问第 i 个字符（不检查越界） | `s[0] = 'A';`      |
+| `.at(i)`                           | 安全访问（带越界检查）        | `s.at(2)`          |
+| `.front()`/`.back()`           | 首尾字符引用                  | `s.back()`         |
+| `.clear()`                         | 清空                          | `s.clear()`        |
+| `.push_back(ch)`/`.pop_back()` | 尾部增删                      | `s.push_back('!')` |
+
+### 拼接与插入
+
+```cpp
+std::string a = "Hello";
+std::string b = "World";
+
+std::string c = a + " " + b;  // 拼接
+a += "!";                     // 追加字符
+a.append(" Everyone");        // append()
+a.insert(0, "Say ");          // 从位置0插入
+```
+
+### 删除与替换
+
+```cpp
+std::string s = "abcdefg";
+s.erase(2, 3);      // 从下标2起删除3个字符 → "abfg"
+s.replace(1, 2, "XYZ");  // 从下标1起替换2个字符 → "aXYZfg"
+```
+
+### 查找字符与子串（重点）
+
+最常用的查找函数有：
+
+| 函数                           | 功能                           | 返回值                                          |
+| -------------------------------- | -------------------------------- | ------------------------------------------------- |
+| `find(ch_or_sub)`          | 从头查找字符或子串             | 找到返回下标，找不到返回`std::string::npos` |
+| `rfind(ch_or_sub)`         | 从尾查找                       | 同上                                            |
+| `find_first_of(chars)`     | 查找任意匹配字符（集合匹配）   | 返回下标                                        |
+| `find_first_not_of(chars)` | 查找第一个“不属于集合”的字符 | 返回下标                                        |
+
+查找字符位置
+
+```cpp
+std::string s = "abcabcabc";
+
+size_t pos = s.find('b');       // 1
+size_t pos2 = s.find('b', 3);   // 从下标3开始找 → 4
+size_t pos3 = s.find("abc", 2); // 从下标2开始找 → 3
+
+if (pos != std::string::npos)
+    std::cout << "Found at: " << pos << "\n";
+```
+
+匹配任意字符集合（范围匹配）
+
+```cpp
+std::string s = "a7c$9";
+
+size_t pos = s.find_first_of("0123456789");  
+// 查找第一个数字 → pos = 1
+
+size_t pos2 = s.find_first_of("!@#$%^&*()"); 
+// 查找第一个符号 → pos2 = 3
+```
+
+如果要找到所有数字的下标：
+
+```cpp
+for (size_t i = 0; i < s.size(); ++i) {
+    if (std::isdigit(s[i])) {
+        std::cout << "digit at index " << i << ": " << s[i] << "\n";
+    }
+}
+```
+
+子串与比较
+
+```cpp
+std::string s = "HelloWorld";
+std::string sub = s.substr(5, 3); // 从下标5取3个字符 → "Wor"
+
+if (s.find("World") != std::string::npos) {
+    std::cout << "Contains 'World'\n";
+}
+
+if (s.compare("HelloWorld") == 0) {
+    std::cout << "完全相同\n";
+}
+```
+
+常用辅助函数（cctype）
+
+```cpp
+#include <cctype>
+
+for (char c : s) {
+    if (std::isupper(c)) ...
+    if (std::islower(c)) ...
+    if (std::isdigit(c)) ...
+    if (std::isalpha(c)) ...
+}
+```
+
+遍历与范围匹配示例
+
+```cpp
+std::string s = "A@bC#dE3f";
+for (size_t i = 0; i < s.size(); ++i) {
+    if (s[i] >= 'a' && s[i] <= 'z') {
+        std::cout << "Lowercase '" << s[i] << "' at " << i << "\n";
+    }
+}
+```
+
+任务：提取所有数字并组成字符串
+
+```cpp
+std::string s = "A1B23C4";
+std::string digits;
+
+for (char c : s)
+    if (std::isdigit(c))
+        digits.push_back(c);
+
+std::cout << digits; // 输出 "1234"
+```
+
+| 特性     | `std::string`       | `char[] / char*`           |
+| ---------- | ------------------------- | -------------------------------- |
+| 内存管理 | 自动                    | 手动                           |
+| 拼接     | `+`、`append()` | `strcat()`                 |
+| 长度     | `.size()`           | `strlen()`                 |
+| 安全性   | 较高（越界检查）        | 容易溢出                       |
+| 查找     | `.find()`           | `strchr()`、`strstr()` |
+| 推荐度   | ✅✅✅                  | ⚠️ 仅在性能要求极高时使用    |
+
+### 小结
+
+| 功能         | 方法                          |
+| -------------- | ------------------------------- |
+| 取长度       | `.size()`                 |
+| 拼接         | `+`,`append()`        |
+| 插入         | `.insert(pos, str)`       |
+| 删除         | `.erase(pos, len)`        |
+| 查找字符     | `.find('x')`              |
+| 查找任意字符 | `.find_first_of("abc")`   |
+| 提取子串     | `.substr(pos, len)`       |
+| 替换         | `.replace(pos, len, str)` |
