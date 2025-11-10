@@ -164,6 +164,12 @@ std::vector<std::vector<int>> space(
     std::vector<int>(column) // value → 每个元素都是长度为 column 的 vector<int>
 );
 
+//可以和string搭配使用实现char的二维数组
+std::vector<std::string> grid(H);
+    for (int i = 0; i < H; ++i) {
+        std::cin >> grid[i];    //输入地图 一行一个string 不用知道具体W大小
+    }
+
 ```
 “创建一个名为 space 的二维数组，共有 row 行，
 每一行是一个长度为 column 的 std::vector<int>。”
