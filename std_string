@@ -61,6 +61,20 @@ size_t pos3 = s.find("abc", 2); // 从下标2开始找 → 3
 
 if (pos != std::string::npos)
     std::cout << "Found at: " << pos << "\n";
+
+//实际应用代码：
+    std::vector<std::string> grid(H);
+    for (int i = 0; i < H; ++i) {
+        std::cin >> grid[i];    //输入地图 一行一个string 不用知道具体W大小
+    }
+
+    //先找到起始位置*
+    int startx,starty;
+    for(int i=0;i<H;i++){
+        if((startx = grid[i].find('*')) != std::string::npos){
+            starty = i;break;
+        }
+    }
 ```
 
 匹配任意字符集合（范围匹配）
